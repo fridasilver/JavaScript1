@@ -2,7 +2,7 @@
 
 // Задание 2
 
-let products = [
+/*let products = [
     {name: 'ежедневник', price: 350},
     {name: 'блокнот на спирали', price: 30},
     {name: 'тетрадь 24 листа в клетку', price: 17},
@@ -10,9 +10,37 @@ let products = [
     {name: 'ручка синяя шариковая', price: 15},
     {name: 'ручка синяя гелевая', price: 30},
     {name: 'набор ручек цветных 12 штук', price: 150}
-];
+];*/
 
-function divBasket(b) {
+let products = [];
+
+function putProductName() { //добавляет текстовое содержимое h2  в массив
+	let putProductName = document.getElementsByTagName('h2');
+	for (var i = 0; i < putProductName.length; i++) {
+       var current = putProductName[i];
+       if(current.children.length === 0 && current.textContent.replace(/ |\n/g,'') !== '') {
+       products.push({name: current.textContent});
+   	};
+    };
+	console.log(products);
+};
+
+window.onload = putProductName;
+
+function putProductPrice() { //добавляет текстовое содержимое span  в массив
+	let putProductPrice = document.getElementsByTagName('span');
+	for (var i = 0; i < putProductPrice.length; i++) {
+       var current = putProductPrice[i];
+       if(current.children.length === 0 && current.textContent.replace(/ |\n/g,'') !== '') {
+       products.push({price: Number(current.textContent)});
+   	};
+    };
+	console.log(products);
+};
+
+window.onload = putProductPrice;
+
+function divBasket(b) { //пишет список товаров в корзине
 let strBasket = "";
 for (let productInBasket in b.goodList) {
 strBasket = strBasket + "\n" + b.goodList[productInBasket].name + " - " + b.goodList[productInBasket].price;
@@ -22,7 +50,7 @@ return strBasket;
 
 let Basket = {
     goodList: [],
-    countTotalPrice() {
+    countTotalPrice() { //считает общую стоимость товаров в корзине
         Basket.totalPrice = 0;
         for (let i = 0; i < this.goodList.length; i++) {
             Basket.totalPrice += this.goodList[i].count * this.goodList[i].price;
@@ -30,7 +58,7 @@ let Basket = {
         console.log('Итого: ' + Basket.totalPrice + ' руб.')
     },
 
-    countTotalNumber() {
+    countTotalNumber() { //считает общее колиество товаров в корзине
         Basket.sumCount = 0;
         for (let i = 0; i < this.goodList.length; i++) {
             Basket.sumCount += this.goodList[i].count;
@@ -38,7 +66,7 @@ let Basket = {
         console.log('Товаров в корзине: ' + Basket.sumCount);
     },
 
-    putProduct(prod, count) {
+    putProduct(prod, count) { //добавляет товар в корзину
         let idx = this.goodList.findIndex(function(elem) {
             return elem.name === prod.name;
         });
@@ -50,7 +78,7 @@ let Basket = {
         }
     },
 
-    resMessage() {
+    resMessage() { //выводит текст на странице с количеством и ценой всех товаров в корзине
         if (Basket.totalPrice === 0) {
             let div = document.getElementById('basket');
             div.innerText = 'Корзина пуста';
@@ -73,7 +101,6 @@ for (let i = 1; i < products.length; i+=2) {
     Basket.putProduct(products[i], 2);
 }
 
-Basket.countTotalNumber();
 Basket.countTotalPrice();
+Basket.countTotalNumber();
 Basket.resMessage();
-Basket.generateGoodHtml();
