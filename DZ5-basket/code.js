@@ -2,48 +2,39 @@
 
 // Задание 2
 
-/*let products = [
-    {name: 'ежедневник', price: 350},
-    {name: 'блокнот на спирали', price: 30},
-    {name: 'тетрадь 24 листа в клетку', price: 17},
-    {name: 'линейка 20 см', price: 25},
-    {name: 'ручка синяя шариковая', price: 15},
-    {name: 'ручка синяя гелевая', price: 30},
-    {name: 'набор ручек цветных 12 штук', price: 150}
-];*/
+let products = [
+    {name: 'Планшет Sumsung', price: 350},
+    {name: 'Телефон Sumsung', price: 300},
+    {name: 'Планшет Huawei', price: 170},
+    {name: 'Телефон Huawei', price: 250},
+    {name: 'Планшет Xiaomi', price: 150},
+    {name: 'Телефон Xiaomi', price: 80},
+    {name: 'Телефон Iphone', price: 150}
+];
 
-let products = [];
-
-function putProductName() { //добавляет текстовое содержимое h2  в массив
-	let putProductName = document.getElementsByTagName('h2');
-	for (var i = 0; i < putProductName.length; i++) {
-       var current = putProductName[i];
-       if(current.children.length === 0 && current.textContent.replace(/ |\n/g,'') !== '') {
-       products.push({name: current.textContent});
-   	};
+function putProductName() { //добавляет на страницу название товара из массива
+    let putProductName = document.getElementsByTagName('h2');
+    for (var i = 0; i<putProductName.length; i++) {
+        putProductName[i].innerHTML = products[i].name;
     };
-	console.log(products);
+    
 };
 
-window.onload = putProductName;
+putProductName();
 
-function putProductPrice() { //добавляет текстовое содержимое span  в массив
-	let putProductPrice = document.getElementsByTagName('span');
-	for (var i = 0; i < putProductPrice.length; i++) {
-       var current = putProductPrice[i];
-       if(current.children.length === 0 && current.textContent.replace(/ |\n/g,'') !== '') {
-       products.push({price: Number(current.textContent)});
-   	};
+function putProductPrice() { //добавляет на страницу цену товара из массива
+    let putProductPrice = document.getElementsByTagName('span');
+    for (var i = 0; i<putProductPrice.length; i++) {
+        putProductPrice[i].innerHTML = products[i].price;
     };
-	console.log(products);
 };
 
-window.onload = putProductPrice;
+putProductPrice();
 
 function divBasket(b) { //пишет список товаров в корзине
 let strBasket = "";
 for (let productInBasket in b.goodList) {
-strBasket = strBasket + "\n" + b.goodList[productInBasket].name + " - " + b.goodList[productInBasket].price;
+strBasket = strBasket + "\n" + b.goodList[productInBasket].name + " - " + b.goodList[productInBasket].price + '$';
 }
 return strBasket;
 };
@@ -66,13 +57,12 @@ let Basket = {
         console.log('Товаров в корзине: ' + Basket.sumCount);
     },
 
-    putProduct(prod, count) { //добавляет товар в корзину
+    putProduct(name, price, count=1) { //добавляет товар в корзину
         let idx = this.goodList.findIndex(function(elem) {
-            return elem.name === prod.name;
+            return elem.name === name;
         });
         if (idx === -1) {
-            this.goodList.push(Object.assign({}, prod));
-            this.goodList[this.goodList.length - 1].count = count;
+            this.goodList.push({name, price, count});
         } else {
             this.goodList[idx].count += count;
         }
@@ -82,25 +72,33 @@ let Basket = {
         if (Basket.totalPrice === 0) {
             let div = document.getElementById('basket');
             div.innerText = 'Корзина пуста';
-           // alert('Корзина пуста');
         } else {    
-           // alert('В корзине ' + Basket.sumCount + ' товаров на сумму ' + Basket.totalPrice + ' рублей.');
             let div = document.getElementById('basket');
-            let result = 'Сумма покупок: ' + Basket.sumCount + ' Кол-во товара: ' + Basket.totalPrice + divBasket(Basket);
+            let result = 'Кол-во товара: ' + Basket.sumCount + ' Сумма покупок:  ' + Basket.totalPrice + ' $' + divBasket(Basket);
             div.innerText = result;
             console.log(result);
         }
     }
     };
 
-for (let i = 0; i < products.length; i+=2) {
-    Basket.putProduct(products[i], 1);
-}
 
-for (let i = 1; i < products.length; i+=2) {
-    Basket.putProduct(products[i], 2);
-}
+function dataName() { //добавляет data-name data-price к кнопкам
+    let button = document.getElementsByClassName('putToBasket');
+    for (var i=0; i<button.length; i++) {
+    button[i].setAttribute('data-name', products[i].name);
+    button[i].setAttribute('data-price', products[i].price);
+    };
+};
 
-Basket.countTotalPrice();
-Basket.countTotalNumber();
-Basket.resMessage();
+dataName();
+
+document.addEventListener('click', event => { //при клике проверяет что клик именно по кнопке, затем выполняет функции
+    if(event.target.classList.contains('putToBasket')) { 
+        Basket.putProduct(event.target.dataset.name, event.target.dataset.price);
+        console.log(Basket.goodList);
+        Basket.countTotalPrice();
+        Basket.countTotalNumber();
+        Basket.resMessage();
+    };
+});
+
